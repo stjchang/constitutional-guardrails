@@ -3,12 +3,16 @@ import yaml
 from typing import Dict, Any
 from anthropic import Anthropic
 from schema import EvaluationSchema
+from dotenv import load_dotenv
+
+load_dotenv()
 
 class ConstitutionalOrchestrator:
     def __init__(self, config_path: str = "config/constitution.yaml"):
         self.client = Anthropic()
-        self.model = "claude-4-6-sonnet-latest" 
+        self.model = "claude-haiku-4-5-20251001"
         
+        ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY")
         # Load the constitution into memory
         with open(config_path, 'r') as f:
             self.constitution = yaml.safe_load(f)['principles']
