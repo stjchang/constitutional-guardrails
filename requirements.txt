@@ -1,0 +1,19 @@
+# requirements.txt
+# Core LLM SDK
+anthropic>=0.28.0
+
+# Data Validation & Schemas (Crucial for Tool Calling/Structured Output)
+pydantic>=2.7.0
+
+# Dashboard & CLI Tools
+streamlit>=1.35.0
+typer>=0.12.0
+
+# Configuration & Environment
+pyyaml>=6.0.1
+python-dotenv>=1.0.1
+
+# Evaluation & Testing
+pytest>=8.2.0
+pandas>=2.2.2  # For managing the eval suite matrix and red-teaming data
+
