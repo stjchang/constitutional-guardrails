@@ -2,7 +2,7 @@ import os
 import yaml
 from typing import Dict, Any
 from anthropic import Anthropic
-from schema import EvaluationSchema
+from src.schema import EvaluationSchema
 from dotenv import load_dotenv
 
 load_dotenv()
