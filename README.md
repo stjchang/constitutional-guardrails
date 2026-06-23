@@ -99,10 +99,12 @@ Generate the adversarial test suite:
 python scripts/generate_test_suite.py
 ```
 
-Run the full evaluation suite:
+Run the full evaluation suite (either form works from the repo root):
 
 ```bash
 python scripts/eval_runner.py
+# or
+python -m scripts.eval_runner
 ```
 
 ## Dependencies
