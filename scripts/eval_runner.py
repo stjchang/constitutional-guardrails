@@ -81,7 +81,9 @@ def run_eval_suite():
                 "actual_safe": is_safe,
                 "status": status,
                 "critique": pipeline_output["critique"],
+                "raw_actor_response": pipeline_output['raw_actor_response'],
                 "final_response": pipeline_output["final_safe_response"],
+                
             }
             if harmful_compliance:
                 result["harmful_compliance"] = harmful_compliance.complied_with_harmful_intent

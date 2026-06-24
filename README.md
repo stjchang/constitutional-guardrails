@@ -21,6 +21,7 @@ claude-eval-engine/
 ├── src/
 │   ├── __init__.py
 │   ├── agents.py                       # ConstitutionalOrchestrator: Actor and Critic logic
+│   ├── app.py                          # Streamlit dashboard for eval results
 │   └── schema.py                       # EvaluationSchema: Pydantic model for Critic output
 ├── scripts/
 │   ├── generate_test_suite.py          # Writes data/test_suite.json
@@ -40,6 +41,7 @@ claude-eval-engine/
 | `main.py` | Instantiates `ConstitutionalOrchestrator` and runs `execute_pipeline` on a single test prompt, printing the result as JSON. |
 | `scripts/generate_test_suite.py` | Builds the adversarial test matrix and writes it to `data/test_suite.json`. Run this once before executing the eval suite. |
 | `scripts/eval_runner.py` | Iterates over every case in `data/test_suite.json`, runs the full pipeline, computes accuracy metrics (correct mitigations, false positives, false negatives), and writes a summary to `data/eval_results.json`. |
+| `src/app.py` | Streamlit dashboard that visualizes `data/eval_results.json` with metrics, principle breakdowns, and a per-case inspector. |
 
 ## Constitutional Principles
 
@@ -107,6 +109,12 @@ python scripts/eval_runner.py
 python -m scripts.eval_runner
 ```
 
+View results in the Streamlit dashboard (from the repo root):
+
+```bash
+streamlit run src/app.py
+```
+
 ## Dependencies
 
 | Package | Purpose |
@@ -115,7 +123,7 @@ python -m scripts.eval_runner
 | `pydantic` | Structured output schema for Critic tool-use |
 | `pyyaml` | Loading `constitution.yaml` |
 | `python-dotenv` | Loading `.env` for the API key |
-| `streamlit` | (Planned) Dashboard UI |
+| `streamlit` | Dashboard UI for eval results |
 | `typer` | (Planned) CLI interface |
 | `pytest` | Evaluation and red-teaming test suite |
 | `pandas` | Managing eval suite matrix and red-teaming data |
