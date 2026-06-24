@@ -91,6 +91,8 @@ Add or modify principles in `config/constitution.yaml` without touching any code
 
 If `is_safe` is `false`, `final_safe_response` contains the Critic's revised response instead of the Actor's original output. On adversarial prompts, `complied_with_harmful_intent` and `compliance_reasoning` indicate whether harmful intent was fulfilled.
 
+Each eval case in `data/eval_results.json` also records `usage` (Actor + Critic token counts, including cache reads). Run-level totals appear under `metrics.usage`.
+
 ## Setup
 
 ```bash
@@ -139,23 +141,23 @@ Planned / exploratory directions for this project:
 
 ### Dashboard
 
-- **Live prompt playground** — Run the Actor–Critic pipeline on custom prompts from the Streamlit UI. Useful for ad-hoc red-teaming and debugging individual cases. 
-- **Constitution editor** — Edit principles in the dashboard and persist changes to `config/constitution.yaml`, so guardrail tuning does not require hand-editing YAML.
+- [ ] **Live prompt playground** — Run the Actor–Critic pipeline on custom prompts from the Streamlit UI. Useful for ad-hoc red-teaming and debugging individual cases.
+- [ ] **Constitution editor** — Edit principles in the dashboard and persist changes to `config/constitution.yaml`, so guardrail tuning does not require hand-editing YAML.
 
 ### Evaluation and reliability
 
-- **Eval history** — Timestamped runs in `data/runs/` with dashboard comparison to track accuracy regressions over time.
-- **Expanded test suite** — More cases per principle, including many-shot jailbreak patterns and edge cases aligned with the referenced research.
-- **Critic calibration** — Reduce false positives (guardrail tax) via constitution tuning and clearer proportionate-refusal guidance; address run-to-run variance with fixed seeds or repeated-run aggregation.
-- **CI eval gate** — GitHub Action that runs the suite and fails if accuracy drops below a threshold.
-- **Many Shot Jailbreaking** - Testing out long context attacks (limited right now due to monetary reasons)
+- [ ] **Eval history** — Timestamped runs in `data/runs/` with dashboard comparison to track accuracy regressions over time.
+- [ ] **Expanded test suite** — More cases per principle, including many-shot jailbreak patterns and edge cases aligned with the referenced research.
+- [ ] **Critic calibration** — Reduce false positives (guardrail tax) via constitution tuning and clearer proportionate-refusal guidance; address run-to-run variance with fixed seeds or repeated-run aggregation.
+- [ ] **CI eval gate** — GitHub Action that runs the suite and fails if accuracy drops below a threshold.
+- [ ] **Many-shot jailbreaking** — Test long-context attacks (limited for now due to API cost).
 
 ### Tooling and optimization
 
-- **Typer CLI** — Unified commands for `eval run`, `eval generate-suite`, and `eval dashboard`.
-- **Token and cost tracking** — Log API usage per case in eval results to monitor spend as well as adjust context windows.
-- **Model comparison** — Run the same suite across Claude models and compare outcomes in the dashboard.
-- **Unit tests** — Cover `classify_result()` and other eval logic with pytest (no live API calls).
+- [ ] **Typer CLI** — Unified commands for `eval run`, `eval generate-suite`, and `eval dashboard`.
+- [x] **Token and cost tracking** — Per-case API usage (input/output/cache tokens) is logged in `eval_results.json` and shown in the dashboard. Reduced token cost from 1048 -> 
+- [ ] **Model comparison** — Run the same suite across Claude models and compare outcomes in the dashboard.
+- [ ] **Unit tests** — Cover `classify_result()` and other eval logic with pytest (no live API calls).
 
 ## References
 

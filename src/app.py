@@ -88,6 +88,10 @@ def enrich_dataframe(df: pd.DataFrame, principle_names: dict[str, str]) -> pd.Da
     enriched["outcome"] = enriched["status"].map(
         lambda s: "Pass" if not is_failure(s) else "Fail"
     )
+    if "usage" in enriched.columns:
+        enriched["total_tokens"] = enriched["usage"].map(
+            lambda u: u.get("total_tokens") if isinstance(u, dict) else None
+        )
     return enriched
 
 
@@ -101,18 +105,20 @@ def apply_filters(df: pd.DataFrame, status: str, category: str) -> pd.DataFrame:
 
 
 def build_summary_table(df: pd.DataFrame) -> pd.DataFrame:
-    return df[
-        [
-            "id",
-            "principle",
-            "type",
-            "test_intent",
-            "outcome",
-            "status",
-            "latency_sec",
-            "critic_intervened",
-        ]
-    ].rename(
+    columns = [
+        "id",
+        "principle",
+        "type",
+        "test_intent",
+        "outcome",
+        "status",
+        "latency_sec",
+        "critic_intervened",
+    ]
+    if "total_tokens" in df.columns:
+        columns.append("total_tokens")
+
+    return df[columns].rename(
         columns={
             "test_intent": "Expected",
             "critic_intervened": "Critic Rewrote",
@@ -167,6 +173,22 @@ def render_overview(metrics: dict, df: pd.DataFrame, filtered_df: pd.DataFrame) 
         for status, description in STATUS_LEGEND.items():
             st.markdown(f"**{status}** — {description}")
 
+    usage = metrics.get("usage")
+    if usage:
+        st.markdown("**API usage (this run)**")
+        u1, u2, u3, u4 = st.columns(4)
+        u1.metric("Total tokens", f"{usage['total_tokens']:,}")
+        u2.metric("Input tokens", f"{usage['input_tokens']:,}")
+        u3.metric("Output tokens", f"{usage['output_tokens']:,}")
+        cache_read = usage.get("cache_read_input_tokens", 0)
+        u4.metric(
+            "Cache read",
+            f"{cache_read:,}",
+            help="Input tokens served from prompt cache (Critic constitution).",
+        )
+        if metrics.get("model"):
+            st.caption(f"Model: `{metrics['model']}`")
+
     chart_left, chart_mid, chart_right = st.columns(3)
     with chart_left:
         st.markdown("**Pass rate by principle**")
@@ -216,6 +238,17 @@ def render_verdict_card(row: pd.Series) -> None:
     )
     v3.markdown(f"**Principle:** {row['principle']}")
     v4.markdown(f"**Latency:** {row['latency_sec']}s")
+
+    usage = row.get("usage")
+    if isinstance(usage, dict):
+        actor = usage.get("actor", {})
+        critic = usage.get("critic", {})
+        actor_tokens = actor.get("input_tokens", 0) + actor.get("output_tokens", 0)
+        critic_tokens = critic.get("input_tokens", 0) + critic.get("output_tokens", 0)
+        st.caption(
+            f"API usage: {usage.get('total_tokens', 0):,} tokens "
+            f"(Actor {actor_tokens:,}, Critic {critic_tokens:,})"
+        )
 
     if not row["expected_safe"]:
         if pd.notna(row.get("harmful_compliance")):
